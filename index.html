@@ -2,67 +2,196 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ethiopian Hacker Lab</title>
-  <style>
-    body {
-      background: #07111f;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-    }
-    header {
-      background: #101f32;
-      padding: 25px;
-      color: #00ff99;
-    }
-    main { padding: 30px 15px; }
-    .card {
-      background: #14263b;
-      margin: 15px auto;
-      padding: 20px;
-      border-radius: 12px;
-      max-width: 420px;
-    }
-    h2 { color: #00ff99; }
-    a { color: #00ff99; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ethiopian Hacker Lab</title>
+<style>
+body {
+  background: #07111f;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 0;
+}
+header {
+  background: #101f32;
+  padding: 25px;
+  color: #00ff99;
+}
+main { padding: 30px 15px; }
+.card {
+  background: #14263b;
+  margin: 15px auto;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 420px;
+}
+h2 { color: #00ff99; }
+input {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  margin: 12px 0;
+  border-radius: 6px;
+  border: 1px solid #456;
+}
+button {
+  background: #00cc80;
+  color: #07111f;
+  border: none;
+  padding: 12px 20px;
+  margin: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+#message { color: #00ff99; }
+#account { display: none; }
+footer { padding: 20px; }
+</style>
 </head>
 <body>
-  <header>
-    <h1>🇪🇹 Ethiopian Hacker Lab</h1>
-    <p>Learn Ethical Hacking & Cyber Security</p>
-  </header>
 
-  <main>
-    <h2>Welcome to Ethiopian Hacker Lab!</h2>
-    <p>Learn cybersecurity safely and legally.</p>
+<header>
+  <h1>🇪🇹 Ethiopian Hacker Lab</h1>
+  <p>Learn Ethical Hacking & Cyber Security</p>
+</header>
 
-    <div class="card">
-      <h2>Ethical Hacking</h2>
-      <p>Learn the basics of ethical hacking.</p>
-    </div>
+<main>
+  <h2>Welcome to Ethiopian Hacker Lab!</h2>
+  <p>Learn cybersecurity safely and legally.</p>
 
-    <div class="card">
-      <h2>Network Security</h2>
-      <p>Understand networks and their security.</p>
-    </div>
+  <div class="card">
+    <h2>Create Account</h2>
+    <form id="signupForm">
+      <input id="signupEmail" type="email" placeholder="Your Email" required>
+      <input id="signupPassword" type="password" placeholder="Create Password (6+ characters)" minlength="6" required>
+      <button type="submit">Sign Up</button>
+    </form>
+  </div>
 
-    <div class="card">
-      <h2>Python & Linux</h2>
-      <p>Learn programming and Linux commands.</p>
-    </div>
+  <div class="card">
+    <h2>Login</h2>
+    <form id="loginForm">
+      <input id="loginEmail" type="email" placeholder="Your Email" required>
+      <input id="loginPassword" type="password" placeholder="Your Password" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
 
-    <div class="card">
-      <h2>Website Security</h2>
-      <p>Learn how to protect websites.</p>
-    </div>
-  </main>
+  <div class="card" id="account">
+    <h2>My Account</h2>
+    <p id="userEmail"></p>
+    <button id="logoutButton">Logout</button>
+  </div>
 
-  <footer>
-    <p>© 2026 Ethiopian Hacker Lab</p>
-  </footer>
+  <p id="message" role="status"></p>
+
+  <div class="card">
+    <h2>Ethical Hacking</h2>
+    <p>Learn the basics of ethical hacking.</p>
+  </div>
+
+  <div class="card">
+    <h2>Network Security</h2>
+    <p>Understand networks and their security.</p>
+  </div>
+
+  <div class="card">
+    <h2>Python & Linux</h2>
+    <p>Learn programming and Linux commands.</p>
+  </div>
+
+  <div class="card">
+    <h2>Website Security</h2>
+    <p>Learn how to protect websites.</p>
+  </div>
+</main>
+
+<footer>
+  <p>© 2026 Ethiopian Hacker Lab</p>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBuiLk0XXDmcvT2LiUpnxPfQq2gcZ_BkqQ",
+  authDomain: "ethiopian-hacker.firebaseapp.com",
+  projectId: "ethiopian-hacker",
+  storageBucket: "ethiopian-hacker.firebasestorage.app",
+  messagingSenderId: "166938641855",
+  appId: "1:166938641855:web:3f0ee4117623080a200d0a"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const message = document.getElementById("message");
+
+function showMessage(text) {
+  message.textContent = text;
+}
+
+document.getElementById("signupForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const email = document.getElementById("signupEmail").value;
+  const password = document.getElementById("signupPassword").value;
+
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    showMessage("Account created successfully!");
+    event.target.reset();
+  } catch (error) {
+    showMessage(error.message);
+  }
+});
+
+document.getElementById("loginForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    showMessage("Login successful!");
+    event.target.reset();
+  } catch (error) {
+    showMessage(error.message);
+  }
+});
+
+document.getElementById("logoutButton").addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+    showMessage("You have logged out.");
+  } catch (error) {
+    showMessage(error.message);
+  }
+});
+
+onAuthStateChanged(auth, (user) => {
+  const account = document.getElementById("account");
+
+  if (user) {
+    account.style.display = "block";
+    document.getElementById("userEmail").textContent = "Logged in as: " + user.email;
+  } else {
+    account.style.display = "none";
+  }
+});
+</script>
+
 </body>
 </html>
