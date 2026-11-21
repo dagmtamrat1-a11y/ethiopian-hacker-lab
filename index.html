@@ -4,11 +4,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Learn ethical hacking, cybersecurity, network security, Python and Linux.">
 <title>Ethiopian Hacker Lab</title>
-<style>
 
+<style>
 * {
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -21,16 +26,25 @@ body {
 
 header {
   background: linear-gradient(135deg, #071b25, #102d32);
-  padding: 35px 15px;
+  padding: 25px 15px;
   color: #00ff99;
   border-bottom: 2px solid #00ff99;
+}
+
+header h1 {
+  font-size: 32px;
+  text-shadow: 0 0 15px #00ff99;
+}
+
+header p {
+  color: #e8fff5;
 }
 
 nav {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 12px;
   padding: 15px;
 }
 
@@ -41,16 +55,31 @@ nav a {
   padding: 10px 15px;
   border: 1px solid #00ff99;
   border-radius: 8px;
+  transition: 0.3s;
 }
 
 nav a:hover {
   background: #00ff99;
   color: #04120d;
-}header h1 {
-  font-size: 32px;
-  text-shadow: 0 0 15px #00ff99;
-#home {
+}
+
+#home, #courses, #signupForm, #loginForm {
   scroll-margin-top: 20px;
+}
+
+.hero-image {
+  padding: 20px;
+}
+
+.hero-image img {
+  width: 100%;
+  max-width: 700px;
+  border-radius: 15px;
+  box-shadow: 0 0 25px #00ff9950;
+}
+
+main {
+  padding: 30px 15px;
 }
 
 .card {
@@ -61,6 +90,7 @@ nav a:hover {
   border-radius: 16px;
   max-width: 460px;
   box-shadow: 0 0 15px #00ff9920;
+  transition: 0.3s;
 }
 
 .card:hover {
@@ -83,6 +113,10 @@ input {
   color: white;
 }
 
+input:focus {
+  outline: 2px solid #00ff99;
+}
+
 button {
   background: #00e68a;
   color: #04120d;
@@ -101,6 +135,7 @@ button:hover {
 
 #message {
   color: #00ff99;
+  overflow-wrap: anywhere;
 }
 
 #account {
@@ -113,46 +148,75 @@ footer {
   border-top: 1px solid #087b59;
 }
 
-img {
-  box-shadow: 0 0 25px #00ff9950;
-}
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 25px;
+  }
 
+  nav {
+    gap: 8px;
+  }
+
+  nav a {
+    padding: 9px 11px;
+  }
+
+  .card {
+    padding: 20px;
+  }
+}
 </style>
 </head>
+
 <body>
 
 <header>
- <nav>
-  <a href="#home">Home</a>
-  <a href="#signupForm">Sign Up</a>
-  <a href="#loginForm">Login</a>
-  <a href="#courses">Courses</a>
-</nav> <h1>🇪🇹 Ethiopian Hacker Lab</h1>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#signupForm">Sign Up</a>
+    <a href="#loginForm">Login</a>
+    <a href="#courses">Courses</a>
+  </nav>
+
+  <h1>🇪🇹 Ethiopian Hacker Lab</h1>
   <p>Learn Ethical Hacking & Cyber Security</p>
 </header>
-<div style="padding:20px;">
+
+<div class="hero-image">
   <img src="hacker.png.png"
-       alt="Ethiopian Hacker Lab"
-       style="width:100%; max-width:700px; border-radius:15px;">
+       alt="Ethiopian Hacker Lab Cybersecurity">
 </div>
+
 <main id="home">
+
   <h2>Welcome to Ethiopian Hacker Lab!</h2>
   <p>Learn cybersecurity safely and legally.</p>
 
   <div class="card">
     <h2>Create Account</h2>
+
     <form id="signupForm">
-      <input id="signupEmail" type="email" placeholder="Your Email" required>
-      <input id="signupPassword" type="password" placeholder="Create Password (6+ characters)" minlength="6" required>
+      <input id="signupEmail" type="email"
+             placeholder="Your Email" required>
+
+      <input id="signupPassword" type="password"
+             placeholder="Create Password (6+ characters)"
+             minlength="6" required>
+
       <button type="submit">Sign Up</button>
     </form>
   </div>
 
   <div class="card">
     <h2>Login</h2>
+
     <form id="loginForm">
-      <input id="loginEmail" type="email" placeholder="Your Email" required>
-      <input id="loginPassword" type="password" placeholder="Your Password" required>
+      <input id="loginEmail" type="email"
+             placeholder="Your Email" required>
+
+      <input id="loginPassword" type="password"
+             placeholder="Your Password" required>
+
       <button type="submit">Login</button>
     </form>
   </div>
@@ -163,7 +227,9 @@ img {
     <button id="logoutButton">Logout</button>
   </div>
 
-  <p id="message" role="status"></p>
+  <p id="message" role="status" aria-live="polite"></p>
+
+  <h2>Our Courses</h2>
 
   <div class="card" id="courses">
     <h2>Ethical Hacking</h2>
@@ -184,10 +250,12 @@ img {
     <h2>Website Security</h2>
     <p>Learn how to protect websites.</p>
   </div>
+
 </main>
 
 <footer>
   <p>© 2026 Ethiopian Hacker Lab</p>
+  <p>Learn. Practice. Protect.</p>
 </footer>
 
 <script type="module">
@@ -263,7 +331,8 @@ onAuthStateChanged(auth, (user) => {
 
   if (user) {
     account.style.display = "block";
-    document.getElementById("userEmail").textContent = "Logged in as: " + user.email;
+    document.getElementById("userEmail").textContent =
+      "Logged in as: " + user.email;
   } else {
     account.style.display = "none";
   }
