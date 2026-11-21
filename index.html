@@ -6,49 +6,99 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ethiopian Hacker Lab</title>
 <style>
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  background: #07111f;
-  color: white;
+  background: #050b12;
+  color: #e8fff5;
   font-family: Arial, sans-serif;
   text-align: center;
   margin: 0;
 }
+
 header {
-  background: #101f32;
+  background: linear-gradient(135deg, #071b25, #102d32);
+  padding: 35px 15px;
+  color: #00ff99;
+  border-bottom: 2px solid #00ff99;
+}
+
+header h1 {
+  font-size: 32px;
+  text-shadow: 0 0 15px #00ff99;
+}
+
+main {
+  padding: 30px 15px;
+}
+
+.card {
+  background: linear-gradient(145deg, #102332, #142d3c);
+  margin: 20px auto;
   padding: 25px;
+  border: 1px solid #087b59;
+  border-radius: 16px;
+  max-width: 460px;
+  box-shadow: 0 0 15px #00ff9920;
+}
+
+.card:hover {
+  border-color: #00ff99;
+  box-shadow: 0 0 22px #00ff9940;
+}
+
+h2 {
   color: #00ff99;
 }
-main { padding: 30px 15px; }
-.card {
-  background: #14263b;
-  margin: 15px auto;
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 420px;
-}
-h2 { color: #00ff99; }
+
 input {
   display: block;
-  box-sizing: border-box;
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   margin: 12px 0;
-  border-radius: 6px;
-  border: 1px solid #456;
+  border-radius: 8px;
+  border: 1px solid #087b59;
+  background: #071522;
+  color: white;
 }
+
 button {
-  background: #00cc80;
-  color: #07111f;
+  background: #00e68a;
+  color: #04120d;
   border: none;
-  padding: 12px 20px;
+  padding: 13px 24px;
   margin: 6px;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
 }
-#message { color: #00ff99; }
-#account { display: none; }
-footer { padding: 20px; }
+
+button:hover {
+  background: #8affc7;
+  box-shadow: 0 0 15px #00ff99;
+}
+
+#message {
+  color: #00ff99;
+}
+
+#account {
+  display: none;
+}
+
+footer {
+  padding: 25px;
+  background: #101f32;
+  border-top: 1px solid #087b59;
+}
+
+img {
+  box-shadow: 0 0 25px #00ff9950;
+}
+
 </style>
 </head>
 <body>
