@@ -327,6 +327,7 @@ footer {
   <p>Learn. Practice. Protect.</p>
 </footer>
 
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
 
@@ -338,8 +339,17 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
 
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  onSnapshot,
+  getDocs,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+
 const firebaseConfig = {
-  apiKey: "AIzaSyBuiLk0XXDmcvT2LiUpnxPfQq2gcZ_BkqQ",
+  apiKey: "AIzaSyBuiLk0XXDmcvT2LiUpnxPfQq2gcZ_BqKQ",
   authDomain: "ethiopian-hacker.firebaseapp.com",
   projectId: "ethiopian-hacker",
   storageBucket: "ethiopian-hacker.firebasestorage.app",
@@ -349,21 +359,26 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
+const ADMIN_UID = "L4QfQixIgEQhJCUXaOhygeYwCA93";
 const message = document.getElementById("message");
 
 function showMessage(text) {
   message.textContent = text;
 }
 
+// SIGN UP
 document.getElementById("signupForm").addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  const email = document.getElementById("signupEmail").value;
-  const password = document.getElementById("signupPassword").value;
-
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
+    await createUserWithEmailAndPassword(
+      auth,
+      document.getElementById("signupEmail").value,
+      document.getElementById("signupPassword").value
+    );
+
     showMessage("Account created successfully!");
     event.target.reset();
   } catch (error) {
@@ -371,14 +386,17 @@ document.getElementById("signupForm").addEventListener("submit", async (event) =
   }
 });
 
+// LOGIN
 document.getElementById("loginForm").addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
-
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    await signInWithEmailAndPassword(
+      auth,
+      document.getElementById("loginEmail").value,
+      document.getElementById("loginPassword").value
+    );
+
     showMessage("Login successful!");
     event.target.reset();
   } catch (error) {
@@ -386,6 +404,7 @@ document.getElementById("loginForm").addEventListener("submit", async (event) =>
   }
 });
 
+// LOGOUT
 document.getElementById("logoutButton").addEventListener("click", async () => {
   try {
     await signOut(auth);
@@ -395,18 +414,162 @@ document.getElementById("logoutButton").addEventListener("click", async () => {
   }
 });
 
+// CREATE QUESTION - ADMIN ONLY
+document.getElementById("postQuestionBtn").addEventListener("click", async () => {
+  const user = auth.currentUser;
+  const question = document.getElementById("newQuestion").value.trim();
+
+  if (!user || user.uid !== ADMIN_UID) {
+    showMessage("Only the admin can post questions.");
+    return;
+  }
+
+  if (!question) {
+    showMessage("Please write a question.");
+    return;
+  }
+
+  try {
+    await addDoc(collection(db, "questions"), {
+      question: question,
+      createdAt: serverTimestamp()
+    });
+
+    document.getElementById("newQuestion").value = "";
+    showMessage("Question posted successfully!");
+  } catch (error) {
+    showMessage(error.message);
+  }
+});
+
+// SHOW QUESTIONS AND PRIVATE ANSWERS
+function showQuestions(user) {
+  const list = document.getElementById("questionsList");
+  list.textContent = "Loading questions...";
+
+  onSnapshot(
+    collection(db, "questions"),
+    async (snapshot) => {
+      list.replaceChildren();
+
+      if (snapshot.empty) {
+        list.textContent = "No questions yet.";
+        return;
+      }
+
+      for (const questionDoc of snapshot.docs) {
+        const data = questionDoc.data();
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const heading = document.createElement("h3");
+        heading.textContent = data.question;
+        card.appendChild(heading);
+
+        if (user) {
+          const form = document.createElement("form");
+          const input = document.createElement("textarea");
+          input.placeholder = "Write your answer here";
+          input.required = true;
+          input.maxLength = 2000;
+
+          const button = document.createElement("button");
+          button.type = "submit";
+          button.textContent = "Submit Answer";
+
+          form.append(input, button);
+
+          form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            try {
+              await addDoc(
+                collection(db, "questions", questionDoc.id, "answers"),
+                {
+                  answer: input.value.trim(),
+                  userId: user.uid,
+                  createdAt: serverTimestamp()
+                }
+              );
+
+              form.reset();
+              showMessage("Your answer was submitted privately!");
+            } catch (error) {
+              showMessage(error.message);
+            }
+          });
+
+          card.appendChild(form);
+        } else {
+          const note = document.createElement("p");
+          note.textContent = "Login to submit your answer.";
+          card.appendChild(note);
+        }
+
+        // Only admin can read answers
+        if (user && user.uid === ADMIN_UID) {
+          const answerTitle = document.createElement("h4");
+          answerTitle.textContent = "Visitor Answers";
+          card.appendChild(answerTitle);
+
+          const answerList = document.createElement("div");
+          answerList.textContent = "Loading answers...";
+          card.appendChild(answerList);
+
+          try {
+            const answers = await getDocs(
+              collection(db, "questions", questionDoc.id, "answers")
+            );
+
+            answerList.replaceChildren();
+
+            if (answers.empty) {
+              answerList.textContent = "No answers yet.";
+            } else {
+              answers.forEach((answerDoc) => {
+                const item = document.createElement("p");
+                item.textContent =
+                  answerDoc.data().answer +
+                  " (Visitor ID: " + answerDoc.data().userId + ")";
+                answerList.appendChild(item);
+              });
+            }
+          } catch (error) {
+            answerList.textContent = "Could not load answers: " + error.message;
+          }
+        }
+
+        list.appendChild(card);
+      }
+    },
+    (error) => {
+      list.textContent = "Could not load questions: " + error.message;
+    }
+  );
+}
+
+// LOGIN STATE
 onAuthStateChanged(auth, (user) => {
   const account = document.getElementById("account");
+  const dashboard = document.getElementById("adminDashboard");
 
   if (user) {
     account.style.display = "block";
     document.getElementById("userEmail").textContent =
       "Logged in as: " + user.email;
+
+    dashboard.style.display =
+      user.uid === ADMIN_UID ? "block" : "none";
   } else {
     account.style.display = "none";
+    dashboard.style.display = "none";
   }
+
+  showQuestions(user);
 });
 </script>
+
 
 </body>
 </html>
